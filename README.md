@@ -1,8 +1,8 @@
-# DJ Mohamed Alaoui - Official Website
+# DJ Looktop - Official Website
 
 🎵 **Moroccan Beats & Global Sounds**
 
-A creative, visually stunning website for DJ Mohamed Alaoui, featuring a unique blend of modern web design with traditional Moroccan aesthetic elements.
+A creative, visually stunning website for DJ Looktop, featuring a unique blend of modern web design with traditional Moroccan aesthetic elements.
 
 ## 🌟 Features
 
@@ -90,7 +90,7 @@ Add new event cards in the events section of `index.html`.
 
 ## 📄 License
 
-© 2025 DJ Mohamed Alaoui. All rights reserved.
+© 2025 DJ Looktop. All rights reserved.
 
 ---
 
