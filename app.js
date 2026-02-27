@@ -1,5 +1,5 @@
 /**
- * DJ Mohamed Alaoui - Website JavaScript
+ * DJ Looktop - Website JavaScript
  * Moroccan Beats & Global Sounds
  */
 
@@ -375,6 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize first nav link as active
     updateActiveNavLink();
     
-    console.log('🎵 DJ Mohamed Alaoui Website Loaded');
+    console.log('🎵 DJ Looktop Website Loaded');
     console.log('🇲🇦 Moroccan Beats & Global Sounds');
 });
