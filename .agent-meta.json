@@ -1,0 +1,21 @@
+{
+  "project_type": "artist-portfolio",
+  "style": "moroccan-modern",
+  "pages": ["index.html"],
+  "color_palette": ["#6B1D3A", "#D4AF37", "#1E3A5F", "#1B6B6B", "#F5E6D3", "#1A1A1A"],
+  "fonts": ["Playfair Display", "Outfit", "Amiri"],
+  "features": [
+    "moroccan-patterns",
+    "animated-background-orbs",
+    "spinning-vinyl-animation",
+    "scroll-reveal-animations",
+    "responsive-mobile-nav",
+    "contact-form",
+    "music-discography",
+    "events-listing",
+    "photo-gallery",
+    "arabic-typography",
+    "smooth-scroll-navigation"
+  ],
+  "last_updated": "2025-01-10"
+}
