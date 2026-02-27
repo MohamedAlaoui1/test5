@@ -1,285 +1,380 @@
-/* ═══════════════════════════════════════════════════════════════
-   DJ MOHAMED ALAOUI - Website JavaScript
-   Moroccan Electronic Music Artist
-   ═══════════════════════════════════════════════════════════════ */
+/**
+ * DJ Mohamed Alaoui - Website JavaScript
+ * Moroccan Beats & Global Sounds
+ */
 
-// ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
 // DOM Elements
-// ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
 const navbar = document.querySelector('.navbar');
 const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelector('.nav-links');
-const navItems = document.querySelectorAll('.nav-links a');
-const sections = document.querySelectorAll('section');
-const contactForm = document.getElementById('contactForm');
+const navMenu = document.querySelector('.nav-menu');
+const navLinks = document.querySelectorAll('.nav-link');
+const playButtons = document.querySelectorAll('.play-btn');
+const audioPlayer = document.getElementById('audioPlayer');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const closePlayerBtn = document.getElementById('closePlayer');
+const trackNameEl = document.getElementById('trackName');
+const progressEl = document.getElementById('progress');
+const currentTimeEl = document.getElementById('currentTime');
+const bookingForm = document.getElementById('bookingForm');
 
-// ─────────────────────────────────────────────────────────────────
-// Navbar Scroll Effect
-// ─────────────────────────────────────────────────────────────────
-function handleNavbarScroll() {
+// ═══════════════════════════════════════════
+// Track Data (simulated)
+// ═══════════════════════════════════════════
+const tracks = {
+    'desert-dreams': { name: 'Desert Dreams EP', duration: '32:15' },
+    'medina-nights': { name: 'Medina Nights', duration: '6:42' },
+    'atlas-rising': { name: 'Atlas Rising', duration: '7:18' },
+    'gnawa-spirit': { name: 'Gnawa Spirit', duration: '8:05' }
+};
+
+let currentTrack = null;
+let isPlaying = false;
+let progressInterval = null;
+let currentProgress = 0;
+
+// ═══════════════════════════════════════════
+// Navigation
+// ═══════════════════════════════════════════
+
+// Scroll effect for navbar
+window.addEventListener('scroll', () => {
     if (window.scrollY > 100) {
         navbar.classList.add('scrolled');
     } else {
         navbar.classList.remove('scrolled');
     }
-}
+    
+    // Update active nav link based on scroll position
+    updateActiveNavLink();
+});
 
-window.addEventListener('scroll', handleNavbarScroll);
-
-// ─────────────────────────────────────────────────────────────────
-// Mobile Navigation Toggle
-// ─────────────────────────────────────────────────────────────────
-function toggleMobileNav() {
+// Mobile menu toggle
+navToggle.addEventListener('click', () => {
     navToggle.classList.toggle('active');
-    navLinks.classList.toggle('active');
-    document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
-}
+    navMenu.classList.toggle('active');
+    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+});
 
-navToggle.addEventListener('click', toggleMobileNav);
-
-// Close mobile nav when clicking a link
-navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        if (navLinks.classList.contains('active')) {
-            toggleMobileNav();
-        }
+// Close mobile menu when clicking a link
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.style.overflow = '';
     });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Active Navigation Link on Scroll
-// ─────────────────────────────────────────────────────────────────
+// Update active nav link based on scroll position
 function updateActiveNavLink() {
-    let currentSection = '';
+    const sections = document.querySelectorAll('section[id]');
+    const scrollPos = window.scrollY + 200;
     
     sections.forEach(section => {
-        const sectionTop = section.offsetTop - 150;
+        const sectionTop = section.offsetTop;
         const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
         
-        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute('id');
-        }
-    });
-    
-    navItems.forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('href') === `#${currentSection}`) {
-            item.classList.add('active');
+        if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
         }
     });
 }
 
-window.addEventListener('scroll', updateActiveNavLink);
-
-// ─────────────────────────────────────────────────────────────────
-// Smooth Scroll for Navigation Links
-// ─────────────────────────────────────────────────────────────────
-navItems.forEach(item => {
-    item.addEventListener('click', (e) => {
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        const targetId = item.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 80;
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const headerOffset = 80;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
             window.scrollTo({
-                top: offsetTop,
+                top: offsetPosition,
                 behavior: 'smooth'
             });
         }
     });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Contact Form Handling
-// ─────────────────────────────────────────────────────────────────
-if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(contactForm);
-        const data = Object.fromEntries(formData);
-        
-        // Simulate form submission
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        // Show loading state
-        submitBtn.innerHTML = `
-            <span>Sending...</span>
-            <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" stroke-dasharray="60" stroke-dashoffset="20"/>
-            </svg>
-        `;
-        submitBtn.disabled = true;
-        
-        // Simulate API call
-        setTimeout(() => {
-            // Show success state
-            submitBtn.innerHTML = `
-                <span>Message Sent!</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            `;
-            submitBtn.style.background = 'linear-gradient(135deg, #1B6B6B 0%, #2D8B8B 100%)';
-            
-            // Reset form
-            contactForm.reset();
-            
-            // Reset button after delay
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.style.background = '';
-                submitBtn.disabled = false;
-            }, 3000);
-        }, 1500);
-    });
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Scroll Reveal Animation
-// ─────────────────────────────────────────────────────────────────
-function revealOnScroll() {
-    const reveals = document.querySelectorAll('.section-header, .about-grid, .album-card, .event-card, .gallery-item, .contact-grid');
-    
-    reveals.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-        
-        if (elementTop < windowHeight - 100) {
-            element.classList.add('revealed');
-        }
-    });
-}
-
-// Add CSS for reveal animation
-const style = document.createElement('style');
-style.textContent = `
-    .section-header,
-    .about-grid,
-    .album-card,
-    .event-card,
-    .gallery-item,
-    .contact-grid {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    
-    .section-header.revealed,
-    .about-grid.revealed,
-    .album-card.revealed,
-    .event-card.revealed,
-    .gallery-item.revealed,
-    .contact-grid.revealed {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    
-    .album-card:nth-child(2) { transition-delay: 0.1s; }
-    .album-card:nth-child(3) { transition-delay: 0.2s; }
-    .album-card:nth-child(4) { transition-delay: 0.3s; }
-    
-    .event-card:nth-child(2) { transition-delay: 0.1s; }
-    .event-card:nth-child(3) { transition-delay: 0.2s; }
-    .event-card:nth-child(4) { transition-delay: 0.3s; }
-    .event-card:nth-child(5) { transition-delay: 0.4s; }
-    
-    .gallery-item:nth-child(2) { transition-delay: 0.1s; }
-    .gallery-item:nth-child(3) { transition-delay: 0.15s; }
-    .gallery-item:nth-child(4) { transition-delay: 0.2s; }
-    .gallery-item:nth-child(5) { transition-delay: 0.25s; }
-    .gallery-item:nth-child(6) { transition-delay: 0.3s; }
-    
-    .spinner {
-        animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-`;
-document.head.appendChild(style);
-
-window.addEventListener('scroll', revealOnScroll);
-window.addEventListener('load', revealOnScroll);
-
-// ─────────────────────────────────────────────────────────────────
-// Vinyl Interaction (Pause on Hover)
-// ─────────────────────────────────────────────────────────────────
-const vinyl = document.querySelector('.vinyl');
-
-if (vinyl) {
-    vinyl.addEventListener('mouseenter', () => {
-        vinyl.style.animationPlayState = 'paused';
-    });
-    
-    vinyl.addEventListener('mouseleave', () => {
-        vinyl.style.animationPlayState = 'running';
-    });
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Play Button Interaction (Visual Feedback)
-// ─────────────────────────────────────────────────────────────────
-const playButtons = document.querySelectorAll('.play-btn');
+// ═══════════════════════════════════════════
+// Audio Player (Simulated)
+// ═══════════════════════════════════════════
 
 playButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        // Visual feedback
-        btn.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            btn.style.transform = 'scale(1)';
-        }, 150);
-        
-        // Get album name for potential audio integration
-        const albumCard = btn.closest('.album-card');
-        const albumTitle = albumCard.querySelector('.album-title')?.textContent;
-        
-        console.log(`Playing: ${albumTitle}`);
-        // Here you would integrate with an audio player or streaming service
+        const trackId = btn.dataset.track;
+        playTrack(trackId);
     });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Parallax Effect for Background Orbs
-// ─────────────────────────────────────────────────────────────────
-function parallaxOrbs() {
-    const orbs = document.querySelectorAll('.orb');
-    const scrollY = window.scrollY;
+function playTrack(trackId) {
+    const track = tracks[trackId];
+    if (!track) return;
     
-    orbs.forEach((orb, index) => {
-        const speed = (index + 1) * 0.05;
-        orb.style.transform = `translateY(${scrollY * speed}px)`;
-    });
+    // If same track, toggle play/pause
+    if (currentTrack === trackId) {
+        togglePlayPause();
+        return;
+    }
+    
+    // New track
+    currentTrack = trackId;
+    trackNameEl.textContent = track.name;
+    currentProgress = 0;
+    progressEl.style.width = '0%';
+    currentTimeEl.textContent = '0:00';
+    
+    // Show player
+    audioPlayer.classList.add('active');
+    
+    // Start playing
+    isPlaying = true;
+    playPauseBtn.textContent = '⏸';
+    startProgressSimulation();
 }
 
-window.addEventListener('scroll', parallaxOrbs);
+function togglePlayPause() {
+    isPlaying = !isPlaying;
+    playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
+    
+    if (isPlaying) {
+        startProgressSimulation();
+    } else {
+        stopProgressSimulation();
+    }
+}
 
-// ─────────────────────────────────────────────────────────────────
-// Keyboard Navigation
-// ─────────────────────────────────────────────────────────────────
-document.addEventListener('keydown', (e) => {
-    // Close mobile nav with Escape key
-    if (e.key === 'Escape' && navLinks.classList.contains('active')) {
-        toggleMobileNav();
+playPauseBtn.addEventListener('click', togglePlayPause);
+
+closePlayerBtn.addEventListener('click', () => {
+    audioPlayer.classList.remove('active');
+    stopProgressSimulation();
+    currentTrack = null;
+    isPlaying = false;
+    playPauseBtn.textContent = '▶';
+});
+
+function startProgressSimulation() {
+    stopProgressSimulation();
+    progressInterval = setInterval(() => {
+        currentProgress += 0.5;
+        if (currentProgress >= 100) {
+            currentProgress = 0;
+        }
+        progressEl.style.width = `${currentProgress}%`;
+        
+        // Update time display
+        const totalSeconds = Math.floor((currentProgress / 100) * 400); // Simulated 6:40 track
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 100);
+}
+
+function stopProgressSimulation() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+}
+
+// ═══════════════════════════════════════════
+// Contact Form
+// ═══════════════════════════════════════════
+
+bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(bookingForm);
+    const data = Object.fromEntries(formData);
+    
+    // Simulate form submission
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<span>Sending...</span>';
+    submitBtn.disabled = true;
+    
+    setTimeout(() => {
+        // Show success message
+        submitBtn.innerHTML = '<span>Message Sent! ✓</span>';
+        submitBtn.style.background = '#1abc9c';
+        
+        // Reset form
+        bookingForm.reset();
+        
+        // Reset button after delay
+        setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.style.background = '';
+            submitBtn.disabled = false;
+        }, 3000);
+    }, 1500);
+});
+
+// ═══════════════════════════════════════════
+// Scroll Animations
+// ═══════════════════════════════════════════
+
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+// Add animation class to elements
+document.querySelectorAll('.music-card, .event-card, .gallery-item, .stat').forEach(el => {
+    el.classList.add('animate-on-scroll');
+    observer.observe(el);
+});
+
+// ═══════════════════════════════════════════
+// Gallery Lightbox (Simple)
+// ═══════════════════════════════════════════
+
+const galleryItems = document.querySelectorAll('.gallery-item');
+
+galleryItems.forEach(item => {
+    item.addEventListener('click', () => {
+        const img = item.querySelector('img');
+        const overlay = item.querySelector('.gallery-overlay span');
+        
+        // Create lightbox
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        lightbox.innerHTML = `
+            <div class="lightbox-content">
+                <img src="${img.src}" alt="${img.alt}">
+                <p>${overlay ? overlay.textContent : ''}</p>
+                <button class="lightbox-close">×</button>
+            </div>
+        `;
+        
+        // Add styles
+        lightbox.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        
+        const content = lightbox.querySelector('.lightbox-content');
+        content.style.cssText = `
+            text-align: center;
+            max-width: 90%;
+            max-height: 90%;
+        `;
+        
+        const lightboxImg = lightbox.querySelector('img');
+        lightboxImg.style.cssText = `
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+        `;
+        
+        const caption = lightbox.querySelector('p');
+        caption.style.cssText = `
+            color: #d4af37;
+            margin-top: 16px;
+            font-size: 1.2rem;
+        `;
+        
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        `;
+        
+        document.body.appendChild(lightbox);
+        document.body.style.overflow = 'hidden';
+        
+        // Fade in
+        requestAnimationFrame(() => {
+            lightbox.style.opacity = '1';
+        });
+        
+        // Close handlers
+        const closeLightbox = () => {
+            lightbox.style.opacity = '0';
+            setTimeout(() => {
+                lightbox.remove();
+                document.body.style.overflow = '';
+            }, 300);
+        };
+        
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+                document.removeEventListener('keydown', escHandler);
+            }
+        });
+    });
+});
+
+// ═══════════════════════════════════════════
+// Moroccan Pattern Animation
+// ═══════════════════════════════════════════
+
+// Subtle parallax effect on pattern overlay
+window.addEventListener('scroll', () => {
+    const pattern = document.querySelector('.pattern-overlay');
+    if (pattern) {
+        const scrolled = window.pageYOffset;
+        pattern.style.transform = `translateY(${scrolled * 0.1}px)`;
     }
 });
 
-// ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
 // Initialize
-// ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial checks
-    handleNavbarScroll();
-    updateActiveNavLink();
-    revealOnScroll();
+    // Add loaded class for initial animations
+    document.body.classList.add('loaded');
     
-    console.log('🎧 DJ Mohamed Alaoui Website Loaded');
-    console.log('🇲🇦 Bringing Moroccan soul to dancefloors worldwide');
+    // Initialize first nav link as active
+    updateActiveNavLink();
+    
+    console.log('🎵 DJ Mohamed Alaoui Website Loaded');
+    console.log('🇲🇦 Moroccan Beats & Global Sounds');
 });

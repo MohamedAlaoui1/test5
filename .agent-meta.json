@@ -1,21 +1,18 @@
 {
-  "project_type": "artist-portfolio",
+  "project_type": "portfolio",
   "style": "moroccan-modern",
   "pages": ["index.html"],
-  "color_palette": ["#6B1D3A", "#D4AF37", "#1E3A5F", "#1B6B6B", "#F5E6D3", "#1A1A1A"],
-  "fonts": ["Playfair Display", "Outfit", "Amiri"],
+  "color_palette": ["#0a0a0f", "#d4af37", "#1abc9c", "#c0392b", "#12121a"],
+  "fonts": ["Playfair Display", "Montserrat"],
   "features": [
-    "moroccan-patterns",
-    "animated-background-orbs",
-    "spinning-vinyl-animation",
-    "scroll-reveal-animations",
-    "responsive-mobile-nav",
-    "contact-form",
-    "music-discography",
-    "events-listing",
-    "photo-gallery",
-    "arabic-typography",
-    "smooth-scroll-navigation"
+    "responsive design",
+    "moroccan patterns",
+    "audio player simulation",
+    "gallery lightbox",
+    "booking form",
+    "events calendar",
+    "scroll animations",
+    "mobile navigation"
   ],
   "last_updated": "2025-01-10"
 }
