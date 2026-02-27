@@ -1,5 +1,6 @@
 {
   "project_type": "portfolio",
+  "project_name": "DJ Looktop",
   "style": "moroccan-modern",
   "pages": ["index.html"],
   "color_palette": ["#0a0a0f", "#d4af37", "#1abc9c", "#c0392b", "#12121a"],
